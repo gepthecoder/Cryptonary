@@ -53,6 +53,7 @@ public class Favourites : MonoBehaviour
         {
             // remove from list
             AppHandler.Instance.FAVOURITE_CRYPTOS.Remove(ID);
+            SaveListToArray();
             // change sprite img
             star_image.sprite = AppHandler.Instance.emptyStar;
         }
@@ -60,10 +61,17 @@ public class Favourites : MonoBehaviour
         {
             // add to list
             AppHandler.Instance.FAVOURITE_CRYPTOS.Add(ID);
+            SaveListToArray();
             // change sprite img
             star_image.sprite = AppHandler.Instance.filledStar;
         }
     }
 
-  
+    private void SaveListToArray()
+    {
+        SaveManager.instance.state.favouriteList = AppHandler.Instance.FAVOURITE_CRYPTOS.ToArray();
+        SaveManager.instance.Save();
+    }
+
+
 }

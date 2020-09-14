@@ -25,6 +25,17 @@ public class AppHandler : MonoBehaviour
         instance = this;
     }
 
+    void Start()
+    {
+        if(SaveManager.instance.state.favouriteList != null)
+        {
+            for (int i = 0; i < SaveManager.instance.state.favouriteList.Length; i++)
+            {
+                string newItem = SaveManager.instance.state.favouriteList[i];
+                FAVOURITE_CRYPTOS.Add(newItem);
+            }
+        }
+    }
 
     public Sprite emptyStar;
     public Sprite filledStar;
