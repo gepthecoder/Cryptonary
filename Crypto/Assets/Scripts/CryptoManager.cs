@@ -249,7 +249,7 @@ public class CryptoManager : MonoBehaviour
     public IEnumerator LoadFavouriteItems()
     {
 
-        if(AppHandler.Instance.FAVOURITE_CRYPTOS.Count == 0)
+        if (AppHandler.Instance.FAVOURITE_CRYPTOS.Count /*SaveManager.instance.state.favouriteList*/ == 0)
         {
             // display text to user
             LoadFave_NotificationError.text = "To populate this area select the star on your favourite crypto.";
@@ -260,7 +260,7 @@ public class CryptoManager : MonoBehaviour
         }
 
 
-        foreach(string crypto in AppHandler.Instance.FAVOURITE_CRYPTOS)
+        foreach(string crypto in /*SaveManager.instance.state.favouriteList*/AppHandler.Instance.FAVOURITE_CRYPTOS)
         {
             //get strings
             string symbol = crypto;
