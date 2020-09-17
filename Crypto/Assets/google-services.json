@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "416179792259",
+    "firebase_url": "https://cryptonary-57f21.firebaseio.com",
+    "project_id": "cryptonary-57f21",
+    "storage_bucket": "cryptonary-57f21.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416179792259:android:c39fa2de5a7f6b9d02aeb6",
+        "android_client_info": {
+          "package_name": "com.GeProduction.Cryptonary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "416179792259-hn26pah2juha54iui03h41pvr8545pcc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2RuYS42jcfK83F_b1b1J2SAd46DqcM68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "416179792259-hn26pah2juha54iui03h41pvr8545pcc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
