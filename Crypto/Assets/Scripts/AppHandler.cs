@@ -119,8 +119,14 @@ public class AppHandler : MonoBehaviour
 
     public void OpenMoreFeatures()
     {
-        //TO:DO -> maybe a different type of gui (slides from the right)
-        //TO:DO -> close function
+        foreach (GameObject feature in CONTENT)
+        {
+            if (feature.name == "MENU")
+            {
+                feature.SetActive(true);
+            }
+            else { feature.SetActive(false); }
+        }
     }
     #endregion
 
