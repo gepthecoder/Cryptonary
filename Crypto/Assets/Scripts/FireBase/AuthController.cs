@@ -15,6 +15,8 @@ public class AuthController : MonoBehaviour
 
                 if (task.IsCanceled)
                 {
+                    Firebase.FirebaseException e = task.Exception.Flatten().InnerExceptions[0] as Firebase.FirebaseException;
+                    GetErrorMessage((AuthError)e.ErrorCode);
                     return;
                 }
                 if (task.IsFaulted)
@@ -25,7 +27,7 @@ public class AuthController : MonoBehaviour
                 }
                 if (task.IsCompleted)
                 {
-
+                    print("User Signed in successfully");
                 }
 
             }));
@@ -33,7 +35,10 @@ public class AuthController : MonoBehaviour
 
     public void SignOut()
     {
-
+        if(FirebaseAuth.DefaultInstance.CurrentUser != null)
+        {
+            FirebaseAuth.DefaultInstance.SignOut();
+        }
     }
 
     void GetErrorMessage(AuthError errorCode)
@@ -41,8 +46,26 @@ public class AuthController : MonoBehaviour
         string msg = "";
         msg = errorCode.ToString();
 
-        switch (msg)
+        switch (errorCode)
         {
+            // existing user
+            case AuthError.AccountExistsWithDifferentCredentials:
+                break;
+
+            // password
+            case AuthError.MissingPassword:
+                break;
+            case AuthError.WrongPassword:
+                break;
+            case AuthError.WeakPassword:
+                break;
+
+            // email
+            case AuthError.InvalidEmail:
+                break;
+            case AuthError.MissingEmail:
+                break;
+
             default:
                 break;
         }
@@ -52,5 +75,59 @@ public class AuthController : MonoBehaviour
     public void SignUp()
     {
 
+        if(emailInput.text == "" || passwordInput.text == "")
+        {
+            print("Please enter both email & password to continue..");
+            return;
+        }
+            FirebaseAuth.DefaultInstance.CreateUserWithEmailAndPasswordAsync(emailInput.text, passwordInput.text)
+            .ContinueWith((task =>{
+
+                if (task.IsCanceled)
+                {
+                    Firebase.FirebaseException e = task.Exception.Flatten().InnerExceptions[0] as Firebase.FirebaseException;
+                    GetErrorMessage((AuthError)e.ErrorCode);
+                    return;
+                }
+
+                if (task.IsFaulted)
+                {
+                    Firebase.FirebaseException e = task.Exception.Flatten().InnerExceptions[0] as Firebase.FirebaseException;
+                    GetErrorMessage((AuthError)e.ErrorCode);
+                    return;
+                }
+
+                if (task.IsCompleted)
+                {
+                    print("Registration completed successfully! :)");
+                }
+
+            }));
+    }
+
+
+    public void SignIn_Anonymous()
+    {
+        FirebaseAuth.DefaultInstance.SignInAnonymouslyAsync()
+            .ContinueWith((task =>
+            {
+
+                if (task.IsCanceled)
+                {
+                    Firebase.FirebaseException e = task.Exception.Flatten().InnerExceptions[0] as Firebase.FirebaseException;
+                    GetErrorMessage((AuthError)e.ErrorCode);
+                    return;
+                }
+                if (task.IsFaulted)
+                {// problem detected
+                    Firebase.FirebaseException e = task.Exception.Flatten().InnerExceptions[0] as Firebase.FirebaseException;
+                    GetErrorMessage((AuthError)e.ErrorCode);
+                    return;
+                }
+                if (task.IsCompleted)
+                {
+                    print("USER IS LOGGED IN");
+                }
+            }));
     }
 }
