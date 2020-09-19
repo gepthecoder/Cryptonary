@@ -48,7 +48,7 @@ public class AppHandler : MonoBehaviour
     /// <returns>MAIN -> 0, FAVOURITES, PORTFOLIO, GLOBAL DATA, NEWS, MORE</returns>
     public GameObject[] CONTENT;
 
-    #region BUTTON HANDLERS
+    #region MAIN CONTENT BUTTON HANDLERS
     public void OpenMarket()
     {
         foreach(GameObject feature in CONTENT)
@@ -128,6 +128,81 @@ public class AppHandler : MonoBehaviour
             else { feature.SetActive(false); }
         }
     }
+    #endregion
+
+    #region MORE FEATURES
+
+    #region SignIn/SignUp
+    public GameObject[] LoginTemplateObjs;
+
+    public void OpenLoginBanner()
+    {// banner for user to sign in or sign up
+        foreach (GameObject template in LoginTemplateObjs)
+        {
+            if(template.name == "USER-LOGIN-REGISTER-BANNER")
+            {
+                template.SetActive(true);
+            }
+            else
+            {
+                template.SetActive(false);
+            }
+        }
+    }
+
+    public void CancelLoginBanner()
+    {
+        foreach (GameObject template in LoginTemplateObjs)
+        {
+            template.SetActive(false);
+        }
+    }
+
+    public void OpenCreateAccount()
+    {
+        foreach (GameObject template in LoginTemplateObjs)
+        {
+            if(template.name == "CREATE-ACCOUNT")
+            {
+                template.SetActive(true);
+            }
+        }
+    }
+
+    public void CloseCreateAccount()
+    {
+        foreach (GameObject template in LoginTemplateObjs)
+        {
+            if (template.name == "CREATE-ACCOUNT")
+            {
+                template.SetActive(false);
+            }
+        }
+    }
+
+    public void OpenSignIn()
+    {
+        foreach (GameObject template in LoginTemplateObjs)
+        {
+            if (template.name == "SIGN-IN")
+            {
+                template.SetActive(true);
+            }
+        }
+    }
+
+    public void CloseSignIn()
+    {
+        foreach (GameObject template in LoginTemplateObjs)
+        {
+            if (template.name == "SIGN-IN")
+            {
+                template.SetActive(false);
+            }
+        }
+    }
+    #endregion
+
     #endregion
 
 }
