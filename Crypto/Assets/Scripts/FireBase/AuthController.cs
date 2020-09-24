@@ -40,6 +40,8 @@ public class AuthController : MonoBehaviour
     // </summary>
     public Animator RegistrationCompletedTemplateAnime;
     public Animator LoginCompletedTemplateAnime;
+    public Animator LogOutCompletedTemplateAnime;
+    public Text TEXT_CHILD_LogOutCompletedTemplateAnime;
 
     // <summary>
     // variables for successfull login
@@ -105,7 +107,7 @@ public class AuthController : MonoBehaviour
                 }
                 if (task.IsCompleted)
                 {
-                    print("User Signed in Successfully");
+                    print("User Signed in Successfully: " + FirebaseAuth.DefaultInstance.CurrentUser.Email);
                     SIGN_IN_BTN.interactable = false;
                 }
 
@@ -113,7 +115,6 @@ public class AuthController : MonoBehaviour
 
         LoginCompletedTemplateAnime.SetTrigger("success");
         CleanUpLoginInputs();
-        LOGIN_SUCCESSFULL();
         Invoke("CloseSignInOpenBanner", 1f);
     }
 
@@ -121,6 +122,7 @@ public class AuthController : MonoBehaviour
     {
         AppHandler.Instance.CloseSignIn();
         AppHandler.Instance.OpenLoginBanner();
+        LOGIN_SUCCESSFULL();
     }
 
     public void LOGIN_SUCCESSFULL()
@@ -142,6 +144,7 @@ public class AuthController : MonoBehaviour
         BTN_BANNER_SIGN_IN.gameObject.SetActive(true);
         BTN_BANNER_SIGN_OUT.gameObject.SetActive(false);
 
+        SIGN_IN_BTN.interactable = true;
         // MORE FEATURES
         BTN_MORE_FEATURES_SignUp_SignIn.GetComponentInChildren<Text>().text = "Sign Up / Sign In";
     }
@@ -165,9 +168,17 @@ public class AuthController : MonoBehaviour
     {
         if(FirebaseAuth.DefaultInstance.CurrentUser != null)
         {
-            FirebaseAuth.DefaultInstance.SignOut();
-            DEFAULT_GUI();
+            string user = FirebaseAuth.DefaultInstance.CurrentUser.Email;
+            TEXT_CHILD_LogOutCompletedTemplateAnime.text = "Logging out user " + user;
+            LogOutCompletedTemplateAnime.SetTrigger("success");
+            Invoke("SIGN_OUT_OPTION", 1f);
         }
+    }
+
+    private void SIGN_OUT_OPTION()
+    {
+        FirebaseAuth.DefaultInstance.SignOut();
+        DEFAULT_GUI();
     }
 
     void GetErrorMessageReg(AuthError errorCode)

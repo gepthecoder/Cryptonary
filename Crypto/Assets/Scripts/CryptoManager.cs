@@ -86,6 +86,7 @@ public class CryptoManager : MonoBehaviour
     private int i = 0;
 
 
+
     void Awake()
     {
         instance = this;
@@ -175,6 +176,7 @@ public class CryptoManager : MonoBehaviour
         loadStatus.text = "100%";
         //done!
         StartCoroutine(LoadTopGainers());
+        SetStarImages();
     }
 
 
@@ -187,7 +189,7 @@ public class CryptoManager : MonoBehaviour
     private IEnumerator LoadTopGainers()
     {
         //get top x gainers -> sort; take first x gainers
-        var ordered = dictOfGains.OrderBy(y => y.Value).ToDictionary(y => y.Key, y => y.Value);
+        var ordered = dictOfGains.OrderBy(y => y.Value).ToDictionary(x => x.Key, y => y.Value);
         var selectedDict = ordered.Take(numOfTopGainers);
         Debug.Log(selectedDict.Count());
 
@@ -248,19 +250,27 @@ public class CryptoManager : MonoBehaviour
     /// <returns>The Fave items.</returns>
     public IEnumerator LoadFavouriteItems()
     {
-
         if (AppHandler.Instance.FAVOURITE_CRYPTOS.Count /*SaveManager.instance.state.favouriteList*/ == 0)
         {
             // display text to user
             LoadFave_NotificationError.text = "To populate this area select the star on your favourite crypto.";
+            yield return null;
         }
         else
         {
             LoadFave_NotificationError.text = "";
         }
 
+        // clear children
+        for (int i = 0; i < contentFavourites.transform.childCount; i++)
+        {
+            GameObject temp = contentFavourites.transform.GetChild(i).gameObject;
+            Destroy(temp);
+        }
 
-        foreach(string crypto in /*SaveManager.instance.state.favouriteList*/AppHandler.Instance.FAVOURITE_CRYPTOS)
+        Debug.Log("Loading cryptos.. lenght: " + AppHandler.Instance.FAVOURITE_CRYPTOS.Count);
+
+        foreach (string crypto in /*SaveManager.instance.state.favouriteList*/AppHandler.Instance.FAVOURITE_CRYPTOS)
         {
             //get strings
             string symbol = crypto;
@@ -305,8 +315,34 @@ public class CryptoManager : MonoBehaviour
         }
 
         //finish
-        templateFavourite.SetActive(false);
+        //templateFavourite.SetActive(false);
         loadStatus.text = "100%";
         //done!
+        Debug.Log("All cryptos are loaded..");
     }
+
+    public void SetStarImages()
+    {
+        GameObject[] cryptocurrencies = GameObject.FindGameObjectsWithTag("CRYPTO");
+        Debug.Log("lenght: " + cryptocurrencies.Length);
+        foreach (GameObject crypto in cryptocurrencies)
+        {
+            string symbol = crypto.name;
+            Debug.Log("current symbol: " + symbol);
+            foreach (string fave_crypto in AppHandler.Instance.FAVOURITE_CRYPTOS)
+            {
+                if(fave_crypto == symbol)
+                {
+                    Image s = crypto.transform.Find("Price/Star").GetComponent<Image>();
+                    if(s != null)
+                    {
+                        s.sprite = AppHandler.Instance.filledStar;
+                        Debug.Log("filled: " + s.gameObject.name);
+                    }
+                }             
+            }
+        }
+    }
+
+
 }

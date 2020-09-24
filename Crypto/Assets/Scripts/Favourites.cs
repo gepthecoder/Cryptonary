@@ -33,7 +33,7 @@ public class Favourites : MonoBehaviour
     public string ID;
     private Image star_image;
 
-    public void  ADD_TO_FAVOURITES()
+    public void ADD_TO_FAVOURITES()
     {
         ID = transform.parent.transform.parent.name;
 
@@ -53,17 +53,21 @@ public class Favourites : MonoBehaviour
         {
             // remove from list
             AppHandler.Instance.FAVOURITE_CRYPTOS.Remove(ID);
+            Debug.Log("Removed crypto: " + ID);
             SaveListToArray();
             // change sprite img
             star_image.sprite = AppHandler.Instance.emptyStar;
+            isFavourite = false;
         }
         else
         {
             // add to list
             AppHandler.Instance.FAVOURITE_CRYPTOS.Add(ID);
             SaveListToArray();
+            Debug.Log("Added crypto: " + ID);
             // change sprite img
             star_image.sprite = AppHandler.Instance.filledStar;
+            isFavourite = true;
         }
     }
 
