@@ -29,18 +29,28 @@ public class AuthController : MonoBehaviour
     // email & pass for logging
     // </summary>
     [SerializeField]
-    private Text log_in_emailInput, log_in_passwordInput;
+    private InputField log_in_emailInput, log_in_passwordInput;
 
     public Text ErrorLoginMessage_Email;
     public Text ErrorLoginMessage_Password;
 
 
+    // <summary>
+    // Animators for transitions
+    // </summary>
     public Animator RegistrationCompletedTemplateAnime;
     public Animator LoginCompletedTemplateAnime;
 
+    // <summary>
+    // variables for successfull login
+    // </summary>
+    public Button BTN_BANNER_SIGN_IN;
+    public Button BTN_BANNER_SIGN_OUT;
+    public Button BTN_BANNER_CREATE_ACC;
+
+    public Button BTN_MORE_FEATURES_SignUp_SignIn;
 
     private DataBridge bridge;
-
 
     void Awake()
     {
@@ -51,6 +61,15 @@ public class AuthController : MonoBehaviour
     {
         CleanUpLoginInputs();
         CleanUpRegisterInputs();
+
+        if (FirebaseAuth.DefaultInstance.CurrentUser != null)
+        {
+            USER_GUI();
+        }
+        else
+        {
+            DEFAULT_GUI();
+        }
     }
 
 
@@ -92,18 +111,62 @@ public class AuthController : MonoBehaviour
 
             }));
 
-        bridge.SaveData();
-        CleanUpLoginInputs();
         LoginCompletedTemplateAnime.SetTrigger("success");
-        AppHandler.Instance.CloseSignIn();
-        AppHandler.Instance.OpenMoreFeatures();
+        CleanUpLoginInputs();
+        LOGIN_SUCCESSFULL();
+        Invoke("CloseSignInOpenBanner", 1f);
     }
+
+    private void CloseSignInOpenBanner()
+    {
+        AppHandler.Instance.CloseSignIn();
+        AppHandler.Instance.OpenLoginBanner();
+    }
+
+    public void LOGIN_SUCCESSFULL()
+    {
+        if(FirebaseAuth.DefaultInstance.CurrentUser == null)
+        {
+            // set default GUI
+            print("User is Null...\nreturning...");
+            return;
+        }
+        USER_GUI();
+    }
+
+    private void DEFAULT_GUI()
+    {
+        // BANNER
+        BTN_BANNER_CREATE_ACC.interactable = true;
+        BTN_BANNER_CREATE_ACC.GetComponentInChildren<Text>().text = "CREATE ACCOUNT";
+        BTN_BANNER_SIGN_IN.gameObject.SetActive(true);
+        BTN_BANNER_SIGN_OUT.gameObject.SetActive(false);
+
+        // MORE FEATURES
+        BTN_MORE_FEATURES_SignUp_SignIn.GetComponentInChildren<Text>().text = "Sign Up / Sign In";
+    }
+
+    private void USER_GUI()
+    {
+        string user_email = FirebaseAuth.DefaultInstance.CurrentUser.Email;/*bridge.LoadData_Email();*/
+        print("USER-GUI email : " + user_email);
+        // BANNER
+        BTN_BANNER_CREATE_ACC.interactable = false;
+        BTN_BANNER_CREATE_ACC.GetComponentInChildren<Text>().text = user_email;
+        BTN_BANNER_SIGN_IN.gameObject.SetActive(false);
+        BTN_BANNER_SIGN_OUT.gameObject.SetActive(true);
+
+        // MORE FEATURES
+        BTN_MORE_FEATURES_SignUp_SignIn.GetComponentInChildren<Text>().text = user_email;
+    }
+
 
     public void SignOut()
     {
         if(FirebaseAuth.DefaultInstance.CurrentUser != null)
         {
             FirebaseAuth.DefaultInstance.SignOut();
+            DEFAULT_GUI();
         }
     }
 
@@ -293,12 +356,18 @@ public class AuthController : MonoBehaviour
 
             }));
 
+        bridge.SaveData();
         RegistrationCompletedTemplateAnime.SetTrigger("success");
-        // close register template; open banner Login/SignIn || Login template
-        AppHandler.Instance.CloseCreateAccount();
-        AppHandler.Instance.OpenLoginBanner();
         // clear text fields
         CleanUpRegisterInputs();
+        // close register template; open banner Login/SignIn || Login template
+        Invoke("CloseRegOpenBanner", 1f);
+    }
+
+    private void CloseRegOpenBanner()
+    {
+        AppHandler.Instance.CloseCreateAccount();
+        AppHandler.Instance.OpenLoginBanner();
     }
 
 

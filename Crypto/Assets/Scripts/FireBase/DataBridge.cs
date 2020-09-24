@@ -8,7 +8,7 @@ using Firebase;
 
 public class DataBridge : MonoBehaviour
 {
-    [SerializeField] private Text usernameInput, passwordInput;
+    [SerializeField] private InputField usernameInput, passwordInput;
 
     private User data;
     private string DATA_URL = "https://cryptonary-57f21.firebaseio.com/";
@@ -33,33 +33,41 @@ public class DataBridge : MonoBehaviour
         string jsonData = JsonUtility.ToJson(data);
         databaseReference.Child("Users" + Random.Range(0, 1000000))
             .SetRawJsonValueAsync(jsonData);
+
+        print("Data Saved Successfully");
     }
 
-    public void LoadData()
+    public string LoadData_Email()
     {
+        string email = "";
+
         FirebaseDatabase.DefaultInstance.GetReferenceFromUrl(DATA_URL).GetValueAsync()
             .ContinueWith((task =>
             {
-                if (task.IsCanceled) { }
-                if (task.IsFaulted) { }
+                if (task.IsCanceled) {}
+                if (task.IsFaulted) {}
                 if (task.IsCompleted)
                 { // we got the data
                     DataSnapshot snapShot = task.Result;
                     string user_data = snapShot.GetRawJsonValue();
                     print("Data is: " + user_data);
                     // extract users
-                    //User m = JsonUtility.FromJson<User>(user_data); => for one data
-                    foreach (var child in snapShot.Children)
-                    {
-                        string t = child.GetRawJsonValue();
-                        User extractedData = JsonUtility.FromJson<User>(t);
+                    User m = JsonUtility.FromJson<User>(user_data);
+                    //foreach (var child in snapShot.Children)
+                    //{
+                    //    string t = child.GetRawJsonValue();
+                    //    User extractedData = JsonUtility.FromJson<User>(t);
 
-                        print("Username is: " + extractedData.username);
-                        print("Password is: " + extractedData.password);
-                    }
+                    //    print("Username is: " + extractedData.username);
+                    //    print("Password is: " + extractedData.password);
+                    //}
+                    email = m.username.ToString();
                 }
 
             }));
+
+        print("DB EMAIL: " + email);
+        return email;
     }
 
 }
