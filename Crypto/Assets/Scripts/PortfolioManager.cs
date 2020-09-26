@@ -7,8 +7,10 @@ using UnityEngine.UI;
 
 public class PortfolioManager : MonoBehaviour
 {
+    public GameObject ADD_TRANSACTION_BANNER;
     public GameObject NEW_PORTFOLIO_BANNER;
     public GameObject MAIN_PORTFOLIO;
+    public GameObject SEARCH_ENGINE;
 
     // NEW PORTFOLIO
     public InputField InputField_MyPortfolio_Name;
@@ -126,4 +128,27 @@ public class PortfolioManager : MonoBehaviour
         NEW_PORTFOLIO_BANNER.SetActive(true);
     }
 
+    // TRANSACTIONS
+
+    public void ADD_TRANSACTION_OPEN_BANNER()
+    {
+        ADD_TRANSACTION_BANNER.SetActive(true);
+    }
+
+    public void CLOSE_TRANSACTION_BANNER()
+    {
+        ADD_TRANSACTION_BANNER.SetActive(false);
+    }
+
+    public void ADD_MANUALLY()
+    {
+        //OPEN & LOAD SEARCH ENGINE
+        StartCoroutine(CryptoManager.Instance.LoadPortfolioSearchItems());
+        SEARCH_ENGINE.SetActive(true);
+    }
+
+    public void CLOSE_SEARCH_ENGINE()
+    {
+        SEARCH_ENGINE.SetActive(false);
+    }
 }

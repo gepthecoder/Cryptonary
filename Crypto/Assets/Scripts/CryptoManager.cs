@@ -75,6 +75,12 @@ public class CryptoManager : MonoBehaviour
 
     #endregion
 
+    #region SEARCH
+    public GameObject SEARCH_PORTFOLIO_TEMPLATE;
+    public GameObject SEARCH_CONTENT;
+
+    #endregion
+
     /// <summary>
     /// The load status text
     /// </summary>
@@ -83,7 +89,7 @@ public class CryptoManager : MonoBehaviour
     /// <summary>
     /// The index as we loop though the array
     /// </summary>
-    private int i = 0;
+    private int i = 0, y = 0;
 
 
 
@@ -99,12 +105,58 @@ public class CryptoManager : MonoBehaviour
 
         loadStatus.text = "0%";
 
+        //StartCoroutine("LoadPortfolioSearchItems");
         //start loading items
         StartCoroutine("LoadItems");
 
         //this will cause an error!
         //print(Cryptocurrencies.getPrice("this"));
     }
+
+    /// <summary>
+    /// Loads the search items.
+    /// </summary>
+    /// <returns>Search items.</returns>
+    public IEnumerator LoadPortfolioSearchItems()
+    {
+        while (y < 50)
+        {
+            //get strings
+            string id = IdNameSymbol[y, 0];
+            string name = IdNameSymbol[y, 1];
+            string symbol = IdNameSymbol[y, 2];
+
+            //get the icon
+            Sprite icon = Cryptocurrencies.getIcon(symbol, Cryptocurrencies.iconTypes.color);
+
+            // check for nullable icon
+            if (icon == null)
+            {
+                icon = Resources.Load("unknown", typeof(Sprite)) as Sprite;
+            }
+
+            //create the new item...and set the data
+            GameObject newItem = Instantiate(SEARCH_PORTFOLIO_TEMPLATE);
+            newItem.transform.Find("icon").GetComponent<Image>().sprite = icon;
+            newItem.transform.Find("Name").GetComponent<Text>().text = name;
+            newItem.transform.Find("Symbol").GetComponent<Text>().text = symbol;
+
+            //move the parent object and resize
+            newItem.transform.SetParent(SEARCH_CONTENT.transform);
+            newItem.transform.localScale = new Vector3(2f, 2f, 2f);
+            //increment
+            y++;
+
+            //rename go
+            newItem.transform.name = symbol;
+
+
+            yield return null;
+            //yield return new WaitForSeconds(0.07f);
+        }
+        //done!
+    }
+
 
     /// <summary>
     /// Loads the items.
