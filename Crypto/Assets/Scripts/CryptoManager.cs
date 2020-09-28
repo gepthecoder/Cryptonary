@@ -78,7 +78,7 @@ public class CryptoManager : MonoBehaviour
     #region SEARCH
     public GameObject SEARCH_PORTFOLIO_TEMPLATE;
     public GameObject SEARCH_CONTENT;
-
+    public int numOfSearchItems = 50;
     #endregion
 
     /// <summary>
@@ -89,7 +89,9 @@ public class CryptoManager : MonoBehaviour
     /// <summary>
     /// The index as we loop though the array
     /// </summary>
-    private int i = 0, y = 0;
+    private int x = 0;
+    private int y = 0;
+    private int z = 0;
 
 
 
@@ -113,13 +115,86 @@ public class CryptoManager : MonoBehaviour
         //print(Cryptocurrencies.getPrice("this"));
     }
 
+    private void KILL_CHILDREN()
+    {
+        //clear children
+        int numOfChildren = SEARCH_CONTENT.transform.childCount;
+        for (int i = 0; i < numOfChildren; i++)
+        {
+            GameObject child = SEARCH_CONTENT.transform.GetChild(i).gameObject;
+            Destroy(child);
+        }
+        Debug.Log("Children deleted..");
+    }
+
+    public void SEARCH_ITEMS(string input)
+    {
+        KILL_CHILDREN();
+        StartCoroutine(LoadPortfolioSearchItemsRealTime(input));
+    }
+
+    public void LOAD_SEARCH_ITEMS_ALL()
+    {
+        KILL_CHILDREN();
+        StartCoroutine(LoadPortfolioSearchItems());
+    }
+
+    public IEnumerator LoadPortfolioSearchItemsRealTime(string input)
+    {
+        //load items that corespond to searched string
+        while (z < numOfSearchItems)
+        {
+            //get strings
+            string id = IdNameSymbol[z, 0];
+            string name = IdNameSymbol[z, 1];
+            string symbol = IdNameSymbol[z, 2];
+
+            if (!symbol.Contains(input.ToLower()) || !name.Contains(input.ToLower())
+                || !symbol.Contains(input.ToUpper()) || !symbol.Contains(input.ToUpper())
+                )
+            {
+                z++;
+                yield return null;
+            }
+            else
+            {
+                //get the icon
+                Sprite icon = Cryptocurrencies.getIcon(symbol, Cryptocurrencies.iconTypes.color);
+
+                // check for nullable icon
+                if (icon == null)
+                {
+                    icon = Resources.Load("unknown", typeof(Sprite)) as Sprite;
+                }
+
+                //create the new item...and set the data
+                GameObject newItem = Instantiate(SEARCH_PORTFOLIO_TEMPLATE);
+                newItem.transform.Find("icon").GetComponent<Image>().sprite = icon;
+                newItem.transform.Find("Name").GetComponent<Text>().text = name;
+                newItem.transform.Find("Symbol").GetComponent<Text>().text = symbol;
+
+                //move the parent object and resize
+                newItem.transform.SetParent(SEARCH_CONTENT.transform);
+                newItem.transform.localScale = new Vector3(2f, 2f, 2f);
+                //increment
+                z++;
+
+                //rename go
+                newItem.transform.name = symbol;
+                yield return null;
+                //yield return new WaitForSeconds(0.07f);
+            }
+        }
+        //done!
+        z = 0;
+    }
     /// <summary>
     /// Loads the search items.
     /// </summary>
     /// <returns>Search items.</returns>
     public IEnumerator LoadPortfolioSearchItems()
     {
-        while (y < 50)
+        while (y < numOfSearchItems)
         {
             //get strings
             string id = IdNameSymbol[y, 0];
@@ -150,11 +225,11 @@ public class CryptoManager : MonoBehaviour
             //rename go
             newItem.transform.name = symbol;
 
-
             yield return null;
             //yield return new WaitForSeconds(0.07f);
         }
         //done!
+        y = 0;
     }
 
 
@@ -164,12 +239,12 @@ public class CryptoManager : MonoBehaviour
     /// <returns>The items.</returns>
     public IEnumerator LoadItems()
     {
-        while (i < numOfCurrencies)
+        while (x < numOfCurrencies)
         {
             //get strings
-            string id = IdNameSymbol[i, 0];
-            string name = IdNameSymbol[i, 1];
-            string symbol = IdNameSymbol[i, 2];
+            string id = IdNameSymbol[x, 0];
+            string name = IdNameSymbol[x, 1];
+            string symbol = IdNameSymbol[x, 2];
 
             //get the icon
             Sprite icon = Cryptocurrencies.getIcon(symbol, Cryptocurrencies.iconTypes.color);
@@ -207,10 +282,10 @@ public class CryptoManager : MonoBehaviour
             newItem.transform.localScale = new Vector3(2f, 2f, 2f);
 
             //increment
-            i++;
+            x++;
 
             //update loadstatus
-            loadStatus.text = ((i / (IdNameSymbol.Length / 3f)) * 100f).ToString() + "%";
+            loadStatus.text = ((x / (IdNameSymbol.Length / 3f)) * 100f).ToString() + "%";
 
             //update dict
              dictOfGains.Add(symbol, percentages[1]);
@@ -354,10 +429,10 @@ public class CryptoManager : MonoBehaviour
             newItem.transform.localScale = new Vector3(2f, 2f, 2f);
 
             //increment
-            i++;
+            x++;
 
             //update loadstatus
-            loadStatus.text = ((i / (IdNameSymbol.Length / 3f)) * 100f).ToString() + "%";
+            loadStatus.text = ((x / (IdNameSymbol.Length / 3f)) * 100f).ToString() + "%";
 
             //rename go
             newItem.transform.name = symbol;

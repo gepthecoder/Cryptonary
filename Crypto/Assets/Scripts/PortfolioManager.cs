@@ -26,8 +26,6 @@ public class PortfolioManager : MonoBehaviour
     public Button BTN_ADD_TRANSACTION;
     //
 
-
-
     void Start()
     {
         if (SaveManager.instance.state.hasPortfolio)
@@ -47,10 +45,12 @@ public class PortfolioManager : MonoBehaviour
     {
         int id = Random.Range(0, 1000);
         string portfolioName = InputField_MyPortfolio_Name.text;
+        Transaction NewTransaction = new Transaction();
+        Transaction[] transactions = { NewTransaction };
         if (portfolioName != "")
         {
             Portfolio item = new Portfolio(
-                id, portfolioName
+                id, portfolioName, transactions
                 );
 
             PortfolioDB.Instance.USER_PORTFOLIOS.Add(item);
@@ -150,5 +150,19 @@ public class PortfolioManager : MonoBehaviour
     public void CLOSE_SEARCH_ENGINE()
     {
         SEARCH_ENGINE.SetActive(false);
+    }
+
+
+    public void GET_INPUT_RESULTS(string input)
+    {
+        if (input == "")
+        {
+            CryptoManager.Instance.LOAD_SEARCH_ITEMS_ALL();
+            Debug.Log("<color=red>INPUT IS NULL</color> ");
+            return;
+        }
+        Debug.Log("<color=green>INPUT IS: </color> " + input);
+        CryptoManager.Instance.SEARCH_ITEMS(input);
+
     }
 }
