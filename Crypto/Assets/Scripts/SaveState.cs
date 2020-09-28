@@ -9,4 +9,5 @@
 
     public bool hasPortfolio;
     public bool hasTransaction; 
+
 }
